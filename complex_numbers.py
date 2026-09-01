@@ -66,28 +66,59 @@ class Complex:
         return Complex(-self.re, -self.im)
 
     def __mul__(self,other):
-        return Complex(self.re*other.re - self.im*other.im, self.re*other.im + self.im*other.re)
+        if isinstance(other, Complex):
+            return Complex(self.re*other.re - self.im*other.im, self.re*other.im + self.im*other.re)
+        elif isinstance(other, Real):
+            return Complex(other*self.re, other*self.im)
+        else:
+            raise TypeError(f"Cannot multiply Complex with {type(other).__name__}")
+
+    def __rmul__(self, other):
+        return self.__mul__(other)
+
+    def __pow__(self, exp) -> "Complex":
+        if isinstance(exp, int) and exp >= 0:
+            result = Complex(1, 0)
+            for _ in range(exp):
+                result = result * self
+            return result
+        elif isinstance(exp, Real):
+            new_r = self.r ** exp
+            new_theta = self.theta * exp
+            return Complex.from_polar(new_r, new_theta)
+        else:
+            raise TypeError(f"Unsupported exponent type: {type(exponent).__name__}")
 
     def __truediv__(self, other):
-        denom = other.re**2 + other.im**2
-        re = (self.re*other.re +self.im*other.im)/denom
-        im = (self.im*other.re-self.re*other.im)/denom
-        return Complex(re, im)
+        try:
+            if abs(other) == 0:
+                raise ZeroDivisionError(f"Cannot divide Complex by 0")
+        except TypeError:
+            pass
+        if isinstance(other, Complex):
+            denom = other.re**2 + other.im**2
+            re = (self.re*other.re +self.im*other.im)/denom
+            im = (self.im*other.re-self.re*other.im)/denom
+            return Complex(re, im)
+        elif isinstance(other, Real):
+            return Complex(self.re/other, self.im/other)
+        else:
+            raise TypeError(f"Cannot do division with Complex and {type(other).__name__}")
+        
     
+    def __rtruediv__(self, other):
+        return Complex(other, 0) / self
+
     def __eq__(self, other):
         if isinstance(other, Complex):
             return math.isclose(self.re, other.re) and math.isclose(self.im, other.im)
         elif isinstance(other, Real):
             return self.im == 0 and math.isclose(self.re, other)
         else:
-            return NotImplemented
-
-    
-    
+            raise TypeError(f"Cannot compare Complex and {type(other).__name__}")
 
 
-a = Complex(3, 4)
-b = Complex(3,0)
-print(a)
-print(b)
-print(a/b)
+
+# TODO
+# self.get_polar -> Tuple
+# self.get_cartesian -> Tuple
