@@ -139,8 +139,7 @@ class Complex:
         else:
             raise TypeError(f"Cannot compare Complex and {type(other).__name__}")
 
-    def isclose(self, other: Real | Complex, abs_tol=1e-9) -> bool:
-        """Check approximate equality with another Complex or real number."""
+    def isclose(self, other, abs_tol=1e-9):
         if isinstance(other, Complex):
             return math.isclose(self.re, other.re, abs_tol=abs_tol) and math.isclose(self.im, other.im, abs_tol=abs_tol)
         elif isinstance(other, Real):
