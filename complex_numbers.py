@@ -111,12 +111,19 @@ class Complex:
 
     def __eq__(self, other):
         if isinstance(other, Complex):
-            return math.isclose(self.re, other.re) and math.isclose(self.im, other.im)
+            return self.re == other.re and self.im == other.im
         elif isinstance(other, Real):
-            return self.im == 0 and math.isclose(self.re, other)
+            return self.re == other and self.im == 0
         else:
             raise TypeError(f"Cannot compare Complex and {type(other).__name__}")
 
+    def isclose(self, other, abs_tol=1e-9):
+        if isinstance(other, Complex):
+            return math.isclose(self.re, other.re, abs_tol=abs_tol) and math.isclose(self.im, other.im, abs_tol=abs_tol)
+        elif isinstance(other, Real):
+            return math.isclose(self.im, 0, abs_tol=abs_tol) and math.isclose(self.re, other, abs_tol=abs_tol)
+        else:
+            raise TypeError(f"Cannot compare Complex and {type(other).__name__}")
 
 # TODO
 # self.get_polar -> Tuple
