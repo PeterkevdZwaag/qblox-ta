@@ -191,3 +191,14 @@ def test_truediv_and_rtruediv0(a, b):
 def test_truediv_and_rtruediv_by_zero_raises(a, b):
     with pytest.raises(ZeroDivisionError):
         a / b
+
+@pytest.mark.parametrize("c, expected_result", [
+    (Complex(1, 2), Complex(1, -2)),
+    (Complex(-1, -2), Complex(-1, 2)),
+    (Complex(3, 0), Complex(3, 0)),
+])
+def test_conjugate(c, expected_result):
+    result = c.conjugate()
+    assert result == expected_result
+    assert c.im + result.im ==  0
+

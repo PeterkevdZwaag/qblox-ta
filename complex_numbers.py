@@ -1,43 +1,54 @@
+from __future__ import annotations
 import math
 from numbers import Real
 
 class Complex:
     
     def __init__(self, re: Real, im: Real):
-
         if not isinstance(re, Real) or not isinstance(im, Real):
             raise TypeError(f"re and im must be real numbers, got {type(re).__name__} and {type(im).__name__}")
         self._re = re
         self._im = im
 
     @classmethod
-    def from_polar(cls, r: Real, theta: Real) -> "Complex":
+    def from_polar(cls, r: Real, theta: Real) -> Complex:
         return cls(r * math.cos(theta), r * math.sin(theta))
 
     @property
     def re(self) -> Real:
+        """The real part of the complex number."""
         return self._re
 
     @property
     def im(self) -> Real:
+        """The imaginary part of the complex number."""
         return self._im
 
     @property
     def r(self) -> float:
+        """The magnitude of the complex number."""
         return math.hypot(self._re, self._im)
 
     @property
     def theta(self) -> float:
+        """The angle, in radians, of the complex number."""
         return math.atan2(self._im, self._re)
 
     def __str__(self):
+        """Return a human-readable string, e.g. '3 + 4i'."""
         if self.im == 0:
             return f"{self.re}"
         elif self.re == 0:
             return f"{self.im}i"
         return f"{self.re} + {self.im}i"
     
-    def __add__(self, other):
+
+    def __repr__(self) -> str:
+        """Return an unambiguous string for debugging."""
+        return NotImplemented
+
+    def __add__(self, other: Real | Complex) -> Complex:
+        """Add a Complex or real number to this Complex number."""
         if isinstance(other, Complex):
             return Complex(self.re + other.re, self.im + other.im)
         elif isinstance(other, Real):
@@ -45,10 +56,12 @@ class Complex:
         else:
             raise TypeError(f"Cannot add Complex and {type(other).__name__}")
 
-    def __radd__(self, other):
+    def __radd__(self, other: Real | Complex) -> Complex:
+        """Add this Complex number to a real or Complex number."""
         return self.__add__(other)
 
-    def __sub__(self, other):
+    def __sub__(self, other: Real | Complex) -> Complex:
+        """Substract a Complex or real number from this Complex number."""
         if isinstance(other, Complex):
             return Complex(self.re - other.re, self.im - other.im)
         elif isinstance(other, Real):
@@ -56,16 +69,20 @@ class Complex:
         else:
             raise TypeError(f"Cannot substract {type(other).__name__} from Complex")
 
-    def __rsub__(self, other):
+    def __rsub__(self, other: Real | Complex) -> Complex:
+        """Substract this Complex number from a real or Complex number."""
         return -self.__sub__(other)
 
     def __abs__(self) -> float:
+        """Return the absolute value of the Complex number."""
         return self.r
 
-    def __neg__(self):
+    def __neg__(self) -> Complex:
+        """Return the negation of the Complex number."""
         return Complex(-self.re, -self.im)
 
-    def __mul__(self,other):
+    def __mul__(self,other: Real | Complex) -> Complex:
+        """Multiply this Complex number by a Complex or real number."""
         if isinstance(other, Complex):
             return Complex(self.re*other.re - self.im*other.im, self.re*other.im + self.im*other.re)
         elif isinstance(other, Real):
@@ -73,10 +90,12 @@ class Complex:
         else:
             raise TypeError(f"Cannot multiply Complex with {type(other).__name__}")
 
-    def __rmul__(self, other):
+    def __rmul__(self, other: Real | Complex) -> Complex:
+        """Multiply a Complex or real number by this Complex number."""
         return self.__mul__(other)
 
-    def __pow__(self, exp) -> "Complex":
+    def __pow__(self, exp: Real) -> Complex:
+        """Raise this Complex number to a real power."""
         if isinstance(exp, int) and exp >= 0:
             result = Complex(1, 0)
             for _ in range(exp):
@@ -87,9 +106,10 @@ class Complex:
             new_theta = self.theta * exp
             return Complex.from_polar(new_r, new_theta)
         else:
-            raise TypeError(f"Unsupported exponent type: {type(exponent).__name__}")
+            raise TypeError(f"Unsupported exponent type: {type(exp).__name__}")
 
-    def __truediv__(self, other):
+    def __truediv__(self, other: Real | Complex) -> Complex:
+        """Divide this Complex number by a real or Complex number."""
         try:
             if abs(other) == 0:
                 raise ZeroDivisionError(f"Cannot divide Complex by 0")
@@ -106,10 +126,12 @@ class Complex:
             raise TypeError(f"Cannot do division with Complex and {type(other).__name__}")
         
     
-    def __rtruediv__(self, other):
+    def __rtruediv__(self, other: Real | Complex) -> Complex:
+        """Divide a real or Complex number by this Complex number."""
         return Complex(other, 0) / self
 
-    def __eq__(self, other):
+    def __eq__(self, other: Real | Complex) -> bool:
+        """Check exact equality with another Complex or real number."""
         if isinstance(other, Complex):
             return self.re == other.re and self.im == other.im
         elif isinstance(other, Real):
@@ -125,6 +147,9 @@ class Complex:
         else:
             raise TypeError(f"Cannot compare Complex and {type(other).__name__}")
 
+    def conjugate(self) -> Complex:
+        """Return the conjugate of the Complex number."""
+        return Complex(self.re, -self.im)
 # TODO
 # self.get_polar -> Tuple
 # self.get_cartesian -> Tuple
