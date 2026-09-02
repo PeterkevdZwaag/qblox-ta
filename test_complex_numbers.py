@@ -31,7 +31,6 @@ def test_init_valid_input(re, im):
     (2, math.pi/2, 0, 2),     # 2i
     (3, math.pi, -3, 0),      # -3
     (4, 3*math.pi/2, 0, -4),  # -4i
-    
     (5, math.atan2(-4, -3), -3, -4), # -3 -4i
     (2, math.atan2(-1, 1), 2**0.5, -2**0.5),   # 2**0.5 -2**0.5i
     (0, 0, 0, 0),             # 0
@@ -59,9 +58,24 @@ def test_str(re, im, expected_str):
     (0.5, Complex(0.5, 0), True),
     (5, Complex(5, 5), False),
     (Complex(0, 0), 0, True),
+    (Complex(0.1 + 0.2, 0), Complex(0.3, 0), False),
+    (Complex.from_polar(1, math.pi), -1, False),
 ])
 def test_eq(a, b, expected_result):
     result = (a == b)
+    assert result == expected_result
+
+@pytest.mark.parametrize("a, b, expected_result", [
+    (Complex(1, 2), Complex(1, 2), True),
+    (Complex(1, 2), Complex(2, 1), False),
+    (Complex(1, 0), 1, True),
+    (Complex(0, 1), 1, False),
+    (Complex(0, 0), 0, True),
+    (Complex(0.1 + 0.2, 0), Complex(0.3, 0), True),
+    (Complex.from_polar(1, math.pi), -1, True),
+])
+def test_isclose(a, b, expected_result):
+    result = a.isclose(b)
     assert result == expected_result
 
 def test_eq_invalid():
