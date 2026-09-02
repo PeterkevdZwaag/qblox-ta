@@ -118,7 +118,6 @@ class Complex:
             raise TypeError(f"Cannot compare Complex and {type(other).__name__}")
 
 
-
 # TODO
 # self.get_polar -> Tuple
 # self.get_cartesian -> Tuple
