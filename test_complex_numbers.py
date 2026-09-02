@@ -19,7 +19,7 @@ def test_init_invalid_input(re, im):
     (-1, -2),        # negative numbers
     (0, 0),          # zero
 ])
-def test_init_valid_input(re, im):
+def test_init(re, im):
     c = Complex(re, im)
     assert c.re == re
     assert c.im == im
@@ -40,6 +40,16 @@ def test_from_polar(r, theta, expected_re, expected_im):
     assert math.isclose(c.re, expected_re, abs_tol=1e-9)
     assert math.isclose(c.im, expected_im, abs_tol=1e-9)
 
+@pytest.mark.parametrize("r, theta", [
+    ("not a number", 2),
+    (1, "not a number"),
+    (None, 2),
+    (1, [1, 2]),
+])
+def test_from_polar_invalid(r, theta):
+    with pytest.raises(TypeError):
+        Complex.from_polar(r, theta)
+
 @pytest.mark.parametrize("re, im, expected_str", [
     (1, 0, "1"),
     (0, 1, "1i"),
@@ -49,6 +59,10 @@ def test_from_polar(r, theta, expected_re, expected_im):
 def test_str(re, im, expected_str):
     c = Complex(re, im)
     assert str(c) == expected_str
+
+def test_repr():
+    c = Complex(1, 2)
+    assert repr(c) == "Complex(1, 2)"
 
 @pytest.mark.parametrize("a, b, expected_result", [
     (Complex(1, 2), Complex(1, 2), True),
@@ -65,6 +79,15 @@ def test_eq(a, b, expected_result):
     result = (a == b)
     assert result == expected_result
 
+def test_eq_invalid():
+    a = Complex(1, 1)
+    b = []
+    c = None
+    with pytest.raises(TypeError):
+        a == b
+    with pytest.raises(TypeError):
+        c == a
+
 @pytest.mark.parametrize("a, b, expected_result", [
     (Complex(1, 2), Complex(1, 2), True),
     (Complex(1, 2), Complex(2, 1), False),
@@ -78,15 +101,14 @@ def test_isclose(a, b, expected_result):
     result = a.isclose(b)
     assert result == expected_result
 
-def test_eq_invalid():
+def test_isclose_invalid():
     a = Complex(1, 1)
     b = []
     c = None
     with pytest.raises(TypeError):
-        a + b
+        a.isclose(b)
     with pytest.raises(TypeError):
-        c + a
-
+        a.isclose(c)
 
 @pytest.mark.parametrize("a, b, expected_re, expected_im", [
     (Complex(1, 2), Complex(3,4), 4, 6),
@@ -142,6 +164,14 @@ def test_mul_and_rmul(a, b, expected_re, expected_im):
     assert c.im == expected_im
     assert c == d
 
+def test_mul_invalid():
+    a = Complex(1, 1)
+    b = "string"
+    with pytest.raises(TypeError):
+        a * b
+    with pytest.raises(TypeError):
+        b * a
+
 @pytest.mark.parametrize("a, e, expected_re, expected_im", [
     (Complex(4, -3), 0, 1, 0),
     (Complex(4, -3), 1, 4, -3),
@@ -154,6 +184,15 @@ def test_pow(a, e, expected_re, expected_im):
     c = a ** e
     assert math.isclose(c.re, expected_re, abs_tol=1e-9)
     assert math.isclose(c.im, expected_im, abs_tol=1e-9)
+    assert c.isclose(Complex(expected_re, expected_im))
+
+def test_pow_invalid():
+    a = Complex(1, 1)
+    e = "string"
+    with pytest.raises(TypeError):
+        a ** e
+    with pytest.raises(TypeError):
+        a ** a
 
 @pytest.mark.parametrize("a, b, expected_re, expected_im", [
     (Complex(3, 6), 3, 1, 2),
@@ -180,6 +219,15 @@ def test_truediv_and_rtruediv0(a, b):
     assert c.re == 0
     assert c.im == 0
     assert c == 0
+
+def test_truediv_and_rtruediv_invalid():
+    a = Complex(1, 1)
+    b = "string"
+    with pytest.raises(TypeError):
+        a / b
+    with pytest.raises(TypeError):
+        b / a
+
 
 @pytest.mark.parametrize("a, b", [
     (Complex(3, 4), 0),                # Complex(not 0) / 0            -> __truediv__

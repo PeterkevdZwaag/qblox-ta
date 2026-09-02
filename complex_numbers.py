@@ -12,6 +12,8 @@ class Complex:
 
     @classmethod
     def from_polar(cls, r: Real, theta: Real) -> Complex:
+        if not isinstance(r, Real) or not isinstance(theta, Real):
+            raise TypeError(f"r and theta must be real numbers, got {type(r).__name__} and {type(theta).__name__}")
         return cls(r * math.cos(theta), r * math.sin(theta))
 
     @property
@@ -41,11 +43,10 @@ class Complex:
         elif self.re == 0:
             return f"{self.im}i"
         return f"{self.re} + {self.im}i"
-    
 
     def __repr__(self) -> str:
         """Return an unambiguous string for debugging."""
-        return NotImplemented
+        return f"Complex({self.re!r}, {self.im!r})"
 
     def __add__(self, other: Real | Complex) -> Complex:
         """Add a Complex or real number to this Complex number."""
@@ -124,8 +125,7 @@ class Complex:
             return Complex(self.re/other, self.im/other)
         else:
             raise TypeError(f"Cannot do division with Complex and {type(other).__name__}")
-        
-    
+
     def __rtruediv__(self, other: Real | Complex) -> Complex:
         """Divide a real or Complex number by this Complex number."""
         return Complex(other, 0) / self
