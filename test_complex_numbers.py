@@ -8,7 +8,7 @@ import math
     (None, 2),
     (1, [1, 2]),
 ])
-def test_init_rejects_non_numeric_input(re, im):
+def test_init_invalid_input(re, im):
     with pytest.raises(TypeError):
         Complex(re, im)
 
@@ -19,12 +19,19 @@ def test_init_rejects_non_numeric_input(re, im):
     (-1, -2),        # negative numbers
     (0, 0),          # zero
 ])
-def test_init_accepts_valid_numeric_input(re, im):
-    Complex(re, im)  # should not raise
+def test_init_valid_input(re, im):
+    c = Complex(re, im)
+    assert c.re == re
+    assert c.im == im
+    assert c.r == math.hypot(re, im)
+    assert c.theta == math.atan2(im, re)
 
 @pytest.mark.parametrize("r, theta, expected_re, expected_im", [
     (1, 0, 1, 0),             # 1
     (2, math.pi/2, 0, 2),     # 2i
+    (3, math.pi, -3, 0),      # -3
+    (4, 3*math.pi/2, 0, -4),  # -4i
+    
     (5, math.atan2(-4, -3), -3, -4), # -3 -4i
     (2, math.atan2(-1, 1), 2**0.5, -2**0.5),   # 2**0.5 -2**0.5i
     (0, 0, 0, 0),             # 0
