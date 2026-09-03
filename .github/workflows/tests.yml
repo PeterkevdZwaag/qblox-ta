@@ -15,4 +15,5 @@ jobs:
         with:
           python-version: "3.13"
       - run: pip install pytest
-      - run: pytest
+      - run: pip install pytest-cov
+      - run: pytest --cov
