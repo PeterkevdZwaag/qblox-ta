@@ -112,9 +112,9 @@ def test_eq_invalid():
     b = []
     c = None
     with pytest.raises(TypeError):
-        a == b
+        assert a == b
     with pytest.raises(TypeError):
-        c == a
+        assert c == a
 
 
 @pytest.mark.parametrize(
@@ -317,3 +317,13 @@ def test_conjugate(c, expected_result):
     result = c.conjugate()
     assert result == expected_result
     assert c.im + result.im == 0
+
+def test_get_cartesion():
+    c = Complex(1, 2)
+    re, im = c.get_cartesian()
+    assert re == c.re and im == c.im
+
+def test_get_polar():
+    c = Complex(1, 2)
+    r, theta = c.get_polar()
+    assert r == c.r and theta == c.theta

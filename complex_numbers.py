@@ -157,15 +157,16 @@ class Complex:
     def conjugate(self) -> Complex:
         """Return the conjugate of the Complex number."""
         return Complex(self.re, -self.im)
+    
+    def get_cartesian(self) -> tuple[Real, Real]:
+        """Return (re, im) as a tuple."""
+        return self.re, self.im
+    
+    def get_polar(self) -> tuple[Real, Real]:
+        """Return (r, theta) as a tuple."""
+        return self.r, self.theta
 
 
 # TODO .ruff.toml file
 # TODO: Ruff format, Ruff linter
-# "Human" comments
-# linter:
-# self.get_polar -> Tuple
-# self.get_cartesian -> Tuple
-# @property decorator
 # TODO: packaging: pyproject.toml
-# TODO: pytest-cov to check pytest coverage
-# TODO: requirements (pytest, pytest-cov)
