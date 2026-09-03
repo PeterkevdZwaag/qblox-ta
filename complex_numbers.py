@@ -90,10 +90,9 @@ class Complex:
     def __mul__(self, other: Real | Complex) -> Complex:
         """Multiply this Complex number by a Complex or real number."""
         if isinstance(other, Complex):
-            return Complex(
-                self.re * other.re - self.im * other.im,
-                self.re * other.im + self.im * other.re,
-            )
+            re = self.re * other.re - self.im * other.im
+            im = self.re * other.im + self.im * other.re
+            return Complex(re, im)
         if isinstance(other, Real):
             return Complex(other * self.re, other * self.im)
         raise TypeError(f"Cannot multiply Complex with {type(other).__name__}")
@@ -107,13 +106,14 @@ class Complex:
         # for exp = 0, 1, 2, etc., use __mul__ to calculate exact result
         if isinstance(exp, int) and exp >= 0:
             result = Complex(1, 0)
-            for _ in range(exp):  # use __mul__ to calculate exact result
+            for _ in range(exp):
                 result = result * self
             return result
+        # for other exp, use polar form to calculate
         if isinstance(exp, Real):
-            new_r = self.r**exp
-            new_theta = self.theta * exp
-            return Complex.from_polar(new_r, new_theta)
+            r = self.r**exp
+            theta = self.theta * exp
+            return Complex.from_polar(r, theta)
         raise TypeError(f"Unsupported exponent type: {type(exp).__name__}")
 
     def __truediv__(self, other: Real | Complex) -> Complex:
@@ -169,7 +169,3 @@ class Complex:
         """Return (r, theta) as a tuple."""
         return self.r, self.theta
 
-
-# TODO .ruff.toml file
-# TODO: Ruff format, Ruff linter
-# TODO: packaging: pyproject.toml
