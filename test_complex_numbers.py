@@ -76,6 +76,7 @@ def test_from_polar_invalid(r, theta):
         (0, 1, "1i"),
         (0, 0, "0"),
         (1, 1, "1 + 1i"),
+        (-1, -1, "-1 - 1i"),
     ],
 )
 def test_str(re, im, expected_str):

@@ -47,10 +47,12 @@ class Complex:
             return f"{self.re}"
         if self.re == 0:
             return f"{self.im}i"
+        if self.im < 0:
+            return f"{self.re} - {-self.im}i"
         return f"{self.re} + {self.im}i"
 
     def __repr__(self) -> str:
-        """Return an unambiguous string for debugging."""
+        """Return printable representation for debugging."""
         return f"Complex({self.re!r}, {self.im!r})"
 
     def __add__(self, other: Real | Complex) -> Complex:
@@ -88,10 +90,9 @@ class Complex:
     def __mul__(self, other: Real | Complex) -> Complex:
         """Multiply this Complex number by a Complex or real number."""
         if isinstance(other, Complex):
-            return Complex(
-                self.re * other.re - self.im * other.im,
-                self.re * other.im + self.im * other.re,
-            )
+            re = self.re * other.re - self.im * other.im
+            im = self.re * other.im + self.im * other.re
+            return Complex(re, im)
         if isinstance(other, Real):
             return Complex(other * self.re, other * self.im)
         raise TypeError(f"Cannot multiply Complex with {type(other).__name__}")
@@ -102,15 +103,17 @@ class Complex:
 
     def __pow__(self, exp: Real) -> Complex:
         """Raise this Complex number to a real power."""
+        # for exp = 0, 1, 2, etc., use __mul__ to calculate exact result
         if isinstance(exp, int) and exp >= 0:
             result = Complex(1, 0)
-            for _ in range(exp):  # use __mul__ to calculate exact result
+            for _ in range(exp):
                 result = result * self
             return result
+        # for other exp, use polar form to calculate
         if isinstance(exp, Real):
-            new_r = self.r**exp
-            new_theta = self.theta * exp
-            return Complex.from_polar(new_r, new_theta)
+            r = self.r**exp
+            theta = self.theta * exp
+            return Complex.from_polar(r, theta)
         raise TypeError(f"Unsupported exponent type: {type(exp).__name__}")
 
     def __truediv__(self, other: Real | Complex) -> Complex:
@@ -119,7 +122,7 @@ class Complex:
             if abs(other) == 0:
                 raise ZeroDivisionError("Cannot divide Complex by 0")
         except TypeError:
-            pass
+            pass # TypeErrors caught below
         if isinstance(other, Complex):
             denom = other.re**2 + other.im**2
             re = (self.re * other.re + self.im * other.im) / denom
@@ -166,7 +169,3 @@ class Complex:
         """Return (r, theta) as a tuple."""
         return self.r, self.theta
 
-
-# TODO .ruff.toml file
-# TODO: Ruff format, Ruff linter
-# TODO: packaging: pyproject.toml
