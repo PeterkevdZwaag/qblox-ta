@@ -47,10 +47,12 @@ class Complex:
             return f"{self.re}"
         if self.re == 0:
             return f"{self.im}i"
+        if self.im < 0:
+            return f"{self.re} - {-self.im}i"
         return f"{self.re} + {self.im}i"
 
     def __repr__(self) -> str:
-        """Return an unambiguous string for debugging."""
+        """Return printable representation for debugging."""
         return f"Complex({self.re!r}, {self.im!r})"
 
     def __add__(self, other: Real | Complex) -> Complex:
@@ -102,6 +104,7 @@ class Complex:
 
     def __pow__(self, exp: Real) -> Complex:
         """Raise this Complex number to a real power."""
+        # for exp = 0, 1, 2, etc., use __mul__ to calculate exact result
         if isinstance(exp, int) and exp >= 0:
             result = Complex(1, 0)
             for _ in range(exp):  # use __mul__ to calculate exact result
@@ -119,7 +122,7 @@ class Complex:
             if abs(other) == 0:
                 raise ZeroDivisionError("Cannot divide Complex by 0")
         except TypeError:
-            pass
+            pass # TypeErrors caught below
         if isinstance(other, Complex):
             denom = other.re**2 + other.im**2
             re = (self.re * other.re + self.im * other.im) / denom
