@@ -43,31 +43,27 @@ class InstrumentBackend:           # hardware abstraction layer to talk to the D
     ...
 
 
-class Data:
+class ChannelData:
     source: str                    # which channel/instrument this came from, e.g. "DUT.AI0", "PCIe.AI3"
     timestamps: list[float]
     values: list                   # float for analog, bool for digital
 
 
-class Analysis:
-    metrics: dict                  # analysis of the data (fit results, caluclations, etc.)
-
-
 class TestResult:
     test_name: str
     conditions: dict                # what set_conditions checked / applied
-    data: list[Data]                # output of run_test
-    analysis: Analysis              # output of analyze
+    data: dict                      # output of run_test
+    analysis: dict                  # output of analyze
     passed: bool                    # output of pass_test
     specs: dict                     # acceptance criteria
     log_file: str
 
 
 class BaseTest:
-    def set_conditions() -> dict: ... # set channel mode, check measurement conditions
-    def run_test() -> list[Data]: ... # set output channels and collect data
-    def analyze(data: list[Data]) -> Analysis: ... # analyze the data
-    def pass_test(analysis: Analysis) -> tuple[bool, dict]: ...  # (passed, specs)
+    def set_conditions() -> dict: ...        # set channel mode, check measurement conditions
+    def run_test() -> data: dict: ...        # set output channels and collect data
+    def analyze(data) -> analysis: dict ...  # analyze the data
+    def pass_test(analysis) -> tuple[bool, dict]: ...  # (passed, specs)
     def run() -> TestResult: ...             # runs the 4 above + logging
 
 
